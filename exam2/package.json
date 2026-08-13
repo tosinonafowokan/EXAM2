@@ -1,6 +1,7 @@
 {
-  "name": "Random-Crypto-Portfolio-Calculator",
+  "name": "Crypto-Portfolio-Calculator",
   "version": "1.0.0",
+  "description": "Crypto Portfolio Calculator",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

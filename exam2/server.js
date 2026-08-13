@@ -5,10 +5,11 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.set('view engine', 'ejs');
-// Loading Page
+
 app.get('/', (req, res) => {
   res.render('index', { coins: null, error: null });
 });
+
 app.get('/load', async (req, res) => {
   try {
     const response = await axios.get(
@@ -16,9 +17,8 @@ app.get('/load', async (req, res) => {
       {
         params: {
           vs_currency: 'usd',
+          ids: 'bitcoin,ethereum,solana',
           order: 'market_cap_desc',
-          per_page: 50,
-          page: 1,
         },
         headers: {
           'Accept': 'application/json',
@@ -28,15 +28,12 @@ app.get('/load', async (req, res) => {
     );
 
     const coins = response.data;
-
-    // Randomly select 3 coins from the list
-    const shuffled = [...coins].sort(() => 0.5 - Math.random());
-    const selectedCoins = shuffled.slice(0, 3).map((coin) => {
-        const unitsFor1000 =
+    const selectedCoins = coins.map((coin) => {
+      const unitsFor1000 =
         coin.current_price > 0
           ? (1000 / coin.current_price).toFixed(6)
           : '0.000000';
-          return {
+      return {
         name: coin.name,
         symbol: coin.symbol.toUpperCase(),
         price: coin.current_price,
@@ -45,6 +42,7 @@ app.get('/load', async (req, res) => {
         image: coin.image,
       };
     });
+
     res.render('index', { coins: selectedCoins, error: null });
   } catch (error) {
     console.error('Error fetching data from CoinGecko:', error.message);
@@ -59,7 +57,6 @@ app.get('/load', async (req, res) => {
   }
 });
 
-//Run the server
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
 });
